@@ -145,7 +145,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: { name },
     })),
 
-    fallback: false,
+    fallback: "blocking",
   }
 }
 
@@ -156,10 +156,20 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const pokemon = await getPokemonsInfo(name)
 
+  if (!pokemon) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    }
+  }
+
   return {
     props: {
       ...pokemon,
     },
+    revalidate: 8400,
   }
 }
 
